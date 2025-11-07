@@ -1,3 +1,4 @@
+```markdown
 # Cloud Attendance System
 
 Group 25 
@@ -19,16 +20,16 @@ Technologies used:
 - Hosted on Render
 
 Features: 
-- Teacher login and logout 
+- Login and logout 
 - Create, view, update, and delete attendance records 
 - RESTful API for attendance data 
 - Responsive UI with popup feedback 
 - Cloud-hosted and publicly accessible
 
 API Endpoints: 
-GET `/api/attendance` — Get all attendance records 
+GET `/api/attendance` — Get all attendance records (supports optional query by userId, start, end) 
 POST `/api/attendance` — Create a new attendance record 
-PUT `/api/attendance/:id` — Update a record by ID 
+PUT `/api/attendance/:id` — Update a record by ID (supports name, timestamp, location) 
 DELETE `/api/attendance/:id` — Delete a record by ID
 
 Sample curl commands:
@@ -40,17 +41,17 @@ curl https://comp3810sef-group25.onrender.com/api/attendance
 ```
 curl -X POST https://comp3810sef-group25.onrender.com/api/attendance \
   -H "Content-Type: application/json" \
-  -d '{"studentId":"13335476","status":"Present","date":"2025-11-07"}'
+  -d '{"userId":"test123","name":"Test User","latitude":22.3,"longitude":114.2}'
 ```
 
 ```
-curl -X PUT https://comp3810sef-group25.onrender.com/api/attendance/<record_id> \
+curl -X PUT https://comp3810sef-group25.onrender.com/api/attendance/690d90cc94a02a28cba509ad \
   -H "Content-Type: application/json" \
-  -d '{"status":"Absent"}'
+  -d '{"name":"Updated Name","latitude":22.4}'
 ```
 
 ```
-curl -X DELETE https://comp3810sef-group25.onrender.com/api/attendance/<record_id>
+curl -X DELETE https://comp3810sef-group25.onrender.com/api/attendance/690d90e194a02a28cba509af
 ```
 
 Notes: 
@@ -58,3 +59,4 @@ Notes:
 - All API endpoints support full CRUD operations. 
 - MongoDB Atlas is used for persistent cloud storage. 
 - The UI is optimized for responsiveness and usability.
+```
