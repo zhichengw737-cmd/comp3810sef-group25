@@ -1,0 +1,16 @@
+<% layout('layout') %>
+
+<h2>Create User</h2>
+<form method="POST" action="/create">
+  <input type="text" name="userId" placeholder="User ID" required />
+  <input type="text" name="name" placeholder="Name" required />
+  <input type="password" name="password" placeholder="Password" required />
+  <select name="role" required>
+    <option value="">Select Role</option>
+    <option value="student">Student</option>
+    <option value="teacher">Teacher</option>
+  </select>
+  <button type="submit">Create User</button>
+</form>
+<a href="/dashboard">Back to Dashboard</a>
+

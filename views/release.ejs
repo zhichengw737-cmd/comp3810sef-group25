@@ -1,0 +1,10 @@
+<% layout('layout') %>
+
+<h2>Release Attendance</h2>
+<form method="POST" action="/release">
+  <label>Duration (minutes):</label>
+  <input type="number" name="duration" required min="1" />
+  <button type="submit">Release</button>
+</form>
+<a href="/dashboard">Back to Dashboard</a>
+

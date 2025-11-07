@@ -1,0 +1,17 @@
+<% layout('layout') %>
+
+<h2>Edit User</h2>
+<form method="POST" action="/update/<%= user._id %>">
+  <input type="text" name="userId" value="<%= user.userId %>" required />
+  <input type="text" name="name" value="<%= user.name %>" required />
+  <input type="password" name="password" placeholder="New Password" required />
+  <% if (sessionUser.role === 'teacher') { %>
+    <select name="role" required>
+      <option value="student" <%= user.role === 'student' ? 'selected' : '' %>>Student</option>
+      <option value="teacher" <%= user.role === 'teacher' ? 'selected' : '' %>>Teacher</option>
+    </select>
+  <% } %>
+  <button type="submit">Update</button>
+</form>
+<a href="/dashboard">Back to Dashboard</a>
+

@@ -1,0 +1,49 @@
+<% layout('layout') %>
+
+<h2>Manage Attendance Window</h2>
+
+<% if (!window) { %>
+  <p>No active attendance window.</p>
+<% } else { %>
+  <p><strong>Start:</strong> <%= new Date(window.startTime).toLocaleString() %></p>
+  <p><strong>End:</strong> <%= new Date(window.endTime).toLocaleString() %></p>
+
+  <form method="POST" action="/window/end">
+    <button type="submit" class="button">End Attendance Now</button>
+  </form>
+
+  <h3>Student Attendance Status</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>User ID</th>
+        <th>Status</th>
+        <th>Time</th>
+        <th>Location</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% allStudents.forEach(student => {
+        const record = signedIn.find(r => r.userId === student.userId);
+      %>
+        <tr>
+          <td><%= student.name %></td>
+          <td><%= student.userId %></td>
+          <% if (record) { %>
+            <td style="color: green;">Signed In</td>
+            <td><%= new Date(record.timestamp).toLocaleString() %></td>
+            <td>(<%= record.location.latitude %>, <%= record.location.longitude %>)</td>
+          <% } else { %>
+            <td style="color: red;">Not Signed In</td>
+            <td>—</td>
+            <td>—</td>
+          <% } %>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>
+
+<a href="/dashboard">Back to Dashboard</a>
+

@@ -1,0 +1,54 @@
+<% layout('layout') %>
+
+<h2>Take Attendance</h2>
+<p id="status"></p>
+<button id="take-btn" class="button">Take Attendance</button>
+<a href="/dashboard" class="button">Back to Dashboard</a>
+
+<!-- Popup container -->
+<div id="popup"></div>
+
+<script>
+document.getElementById("take-btn").addEventListener("click", () => {
+  showPopup("⏳ Taking attendance, please wait...");
+
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    const { latitude, longitude } = position.coords;
+
+    try {
+      const res = await fetch('/attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ latitude, longitude })
+      });
+
+      const result = await res.json();
+
+      if (result.status === 'no-window') {
+        showPopup('❌ No attendance window is currently open.');
+        document.getElementById('status').innerText = 'No attendance window released.';
+      } else if (result.status === 'already') {
+        showPopup(`⚠️ Already checked in at ${new Date(result.time).toLocaleString()}`);
+        document.getElementById('status').innerText =
+          `Already checked in at ${new Date(result.time).toLocaleString()}`;
+      } else if (result.status === 'success') {
+        showPopup(`✅ Attendance recorded at ${new Date(result.time).toLocaleString()}`);
+        document.getElementById('status').innerText =
+          `Attendance recorded at ${new Date(result.time).toLocaleString()}`;
+      }
+    } catch (error) {
+      showPopup('❌ Failed to record attendance. Please try again.');
+    }
+  }, () => {
+    showPopup('❌ Location access denied.');
+  });
+});
+
+function showPopup(message) {
+  const popup = document.getElementById("popup");
+  popup.innerText = message;
+  popup.classList.add("show");
+  setTimeout(() => popup.classList.remove("show"), 4000);
+}
+</script>
+

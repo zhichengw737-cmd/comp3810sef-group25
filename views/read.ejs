@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>User List</title>
+</head>
+<body>
+  <h2>All Users</h2>
+  <table border="1">
+    <tr>
+      <th>User ID</th>
+      <th>Name</th>
+      <th>Role</th>
+      <th>Actions</th>
+    </tr>
+    <% users.forEach(user => { %>
+      <tr>
+        <td><%= user.userId %></td>
+        <td><%= user.name %></td>
+        <td><%= user.role %></td>
+        <td>
+          <a href="/edit/<%= user._id %>">Edit</a>
+          <% if (sessionUser.role === 'teacher') { %>
+            <form action="/delete/<%= user._id %>" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this user?');">
+              <button type="submit">Delete</button>
+            </form>
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+</body>
+</html>
+
