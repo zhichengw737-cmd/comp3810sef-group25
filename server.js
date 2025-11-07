@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 const express = require('express');
 const cookieSession = require('cookie-session');
@@ -29,7 +30,7 @@ app.use(express.json());
 
 app.use(cookieSession({
   name: 'session',
-  keys: ['yourSecretKey']
+  keys: [process.env.SESSION_KEY || 'yourSecretKey']
 }));
 
 app.use((req, res, next) => {
@@ -167,10 +168,74 @@ app.post('/attendance', requireLogin, async (req, res) => {
   }
 });
 
-app.get('/api/attendance', requireLogin, async (req, res) => {
+// Public RESTful API for Attendance (no authentication required)
+// Read (GET) - supports optional query by userId
+app.get('/api/attendance', async (req, res) => {
   try {
-    const records = await Attendance.find({ userId: req.session.user.userId });
+    const { userId, start, end } = req.query;
+    const filter = {};
+    if (userId) filter.userId = userId;
+    if (start || end) {
+      filter.timestamp = {};
+      if (start) filter.timestamp.$gte = new Date(start);
+      if (end) filter.timestamp.$lte = new Date(end);
+    }
+    const records = await Attendance.find(filter);
     res.json(records);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Create (POST)
+app.post('/api/attendance', async (req, res) => {
+  try {
+    const { userId, name, latitude, longitude, timestamp } = req.body;
+    const record = await Attendance.create({
+      userId: userId || 'unknown',
+      name: name || 'unknown',
+      timestamp: timestamp ? new Date(timestamp) : new Date(),
+      location: {
+        latitude: latitude !== undefined ? latitude : null,
+        longitude: longitude !== undefined ? longitude : null
+      }
+    });
+    res.status(201).json(record);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Update (PUT)
+app.put('/api/attendance/:id', async (req, res) => {
+  try {
+    const updateData = {};
+    if (req.body.userId) updateData.userId = req.body.userId;
+    if (req.body.name) updateData.name = req.body.name;
+    if (req.body.timestamp) updateData.timestamp = new Date(req.body.timestamp);
+    if (req.body.latitude !== undefined || req.body.longitude !== undefined) {
+      updateData.location = {};
+      if (req.body.latitude !== undefined) updateData.location.latitude = req.body.latitude;
+      if (req.body.longitude !== undefined) updateData.location.longitude = req.body.longitude;
+    }
+
+    const updated = await Attendance.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    if (!updated) return res.status(404).json({ error: 'Record not found' });
+    res.json(updated);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Delete (DELETE)
+app.delete('/api/attendance/:id', async (req, res) => {
+  try {
+    const deleted = await Attendance.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Record not found' });
+    res.json({ status: 'deleted' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -364,7 +429,8 @@ app.post('/window/end', requireLogin, async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log('Server running on port ' + PORT);
 });
 
