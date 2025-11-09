@@ -21,7 +21,7 @@
   <% } else { %>
     <% const latest = records[records.length - 1]; %>
     <% if (latest && latest.timestamp) { %>
-      <p><strong>Time:</strong> <%= new Date(latest.timestamp).toLocaleString('zh-HK', { timeZone: 'Asia/Hong_Kong' }) %></p>
+      <p><strong>Time:</strong> <%= new Date(latest.timestamp).toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' }) %></p>
     <% } else { %>
       <p><strong>Time:</strong> N/A</p>
     <% } %>

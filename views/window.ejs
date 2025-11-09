@@ -5,8 +5,8 @@
 <% if (!window) { %>
   <p>No active attendance window.</p>
 <% } else { %>
-  <p><strong>Start:</strong> <%= new Date(window.startTime).toLocaleString('zh-HK', { timeZone: 'Asia/Hong_Kong' }) %></p>
-  <p><strong>End:</strong> <%= new Date(window.endTime).toLocaleString('zh-HK', { timeZone: 'Asia/Hong_Kong' }) %></p>
+  <p><strong>Start:</strong> <%= new Date(window.startTime).toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' }) %></p>
+  <p><strong>End:</strong> <%= new Date(window.endTime).toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' }) %></p>
 
   <form method="POST" action="/window/end">
     <button type="submit" class="button">End Attendance Now</button>
@@ -33,7 +33,7 @@
           <% if (record) { %>
             <td style="color: green;">Signed In</td>
             <% if (record.timestamp) { %>
-              <td><%= new Date(record.timestamp).toLocaleString('zh-HK', { timeZone: 'Asia/Hong_Kong' }) %></td>
+              <td><%= new Date(record.timestamp).toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' }) %></td>
             <% } else { %>
               <td>N/A</td>
             <% } %>
