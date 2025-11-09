@@ -20,7 +20,7 @@
     <p>No attendance records yet.</p>
   <% } else { %>
     <% const latest = records[records.length - 1]; %>
-    <p><strong>Time:</strong> <%= new Date(latest.timestamp).toLocaleString() %></p>
+    <p><strong>Time:</strong> <%= new Date(latest.timestamp).toLocaleString('zh-HK', { timeZone: 'Asia/Hong_Kong' }) %></p>
     <p><strong>Location:</strong> (<%= latest.location.latitude %>, <%= latest.location.longitude %>)</p>
   <% } %>
 </section>
