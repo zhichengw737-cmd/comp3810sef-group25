@@ -7,7 +7,7 @@ const path = require('path');
 
 const app = express();
 
-// MongoDB connection
+
 const uri = 'mongodb+srv://1234567:Aaa20050613@cluster0.eyzqzgd.mongodb.net/cloud_attendance?retryWrites=true&w=majority';
 mongoose.connect(uri, {
   useNewUrlParser: true,
@@ -18,12 +18,12 @@ db.on('connected', () => console.log('Connected to MongoDB Atlas'));
 db.on('error', (err) => console.error('MongoDB connection error:', err));
 db.on('disconnected', () => console.log('Disconnected from MongoDB Atlas'));
 
-// View engine setup
+
 app.engine('ejs', engine);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Middleware
+
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -38,7 +38,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Models
+
 const userSchema = new mongoose.Schema({
   userId: String,
   name: String,
@@ -65,7 +65,6 @@ const attendanceWindowSchema = new mongoose.Schema({
 });
 const AttendanceWindow = mongoose.model('AttendanceWindow', attendanceWindowSchema);
 
-// Auth middleware
 function requireLogin(req, res, next) {
   if (req.session && req.session.user) {
     next();
@@ -74,7 +73,7 @@ function requireLogin(req, res, next) {
   }
 }
 
-// Routes
+
 app.get('/', (req, res) => {
   req.session = null;
   res.redirect('/login');
@@ -108,7 +107,7 @@ app.post('/login', async (req, res) => {
 
 app.get('/attendance', requireLogin, async (req, res) => {
   try {
-    const now = new Date();
+    const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Hong_Kong" }));
     const window = await AttendanceWindow.findOne({
       startTime: { $lte: now },
       endTime: { $gte: now }
@@ -168,8 +167,7 @@ app.post('/attendance', requireLogin, async (req, res) => {
   }
 });
 
-// Public RESTful API for Attendance (no authentication required)
-// Read (GET) - supports optional query by userId
+
 app.get('/api/attendance', async (req, res) => {
   try {
     const { userId, start, end } = req.query;
@@ -188,14 +186,17 @@ app.get('/api/attendance', async (req, res) => {
   }
 });
 
-// Create (POST)
+
 app.post('/api/attendance', async (req, res) => {
   try {
     const { userId, name, latitude, longitude, timestamp } = req.body;
     const record = await Attendance.create({
       userId: userId || 'unknown',
       name: name || 'unknown',
-      timestamp: timestamp ? new Date(timestamp) : new Date(),
+      timestamp: timestamp
+  ? new Date(new Date(timestamp).toLocaleString("en-US", { timeZone: "Asia/Hong_Kong" }))
+  : new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Hong_Kong" })),
+
       location: {
         latitude: latitude !== undefined ? latitude : null,
         longitude: longitude !== undefined ? longitude : null
@@ -208,7 +209,7 @@ app.post('/api/attendance', async (req, res) => {
   }
 });
 
-// Update (PUT)
+
 app.put('/api/attendance/:id', async (req, res) => {
   try {
     const updateData = {};
@@ -230,7 +231,7 @@ app.put('/api/attendance/:id', async (req, res) => {
   }
 });
 
-// Delete (DELETE)
+
 app.delete('/api/attendance/:id', async (req, res) => {
   try {
     const deleted = await Attendance.findByIdAndDelete(req.params.id);
