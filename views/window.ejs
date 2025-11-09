@@ -5,8 +5,8 @@
 <% if (!window) { %>
   <p>No active attendance window.</p>
 <% } else { %>
-  <p><strong>Start:</strong> <%= new Date(window.startTime).toLocaleString() %></p>
-  <p><strong>End:</strong> <%= new Date(window.endTime).toLocaleString() %></p>
+  <p><strong>Start:</strong> <%= new Date(window.startTime).toLocaleString('zh-HK', { timeZone: 'Asia/Hong_Kong' }) %></p>
+  <p><strong>End:</strong> <%= new Date(window.endTime).toLocaleString('zh-HK', { timeZone: 'Asia/Hong_Kong' }) %></p>
 
   <form method="POST" action="/window/end">
     <button type="submit" class="button">End Attendance Now</button>
@@ -32,7 +32,11 @@
           <td><%= student.userId %></td>
           <% if (record) { %>
             <td style="color: green;">Signed In</td>
-            <td><%= new Date(record.timestamp).toLocaleString() %></td>
+            <% if (record.timestamp) { %>
+              <td><%= new Date(record.timestamp).toLocaleString('zh-HK', { timeZone: 'Asia/Hong_Kong' }) %></td>
+            <% } else { %>
+              <td>N/A</td>
+            <% } %>
             <td>(<%= record.location.latitude %>, <%= record.location.longitude %>)</td>
           <% } else { %>
             <td style="color: red;">Not Signed In</td>
